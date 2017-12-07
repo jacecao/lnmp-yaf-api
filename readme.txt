@@ -6,4 +6,4 @@
 4.重启Webserver;
 5.访问http://yourhost/six/,出现Hellow Word!, 表示运行成功,否则请查看php错误日志;
 
-hello
+主机访问地址：localhost:8080
