@@ -1,0 +1,18 @@
+CREATE TABLE IF NOT EXISTS `user` (
+	`id` int(10) unsigned NOT NULL COMMENT 'user id',
+	`name` varchar(64) COLLATE utf8_unicode_ci NOT NULL COMMENT 'user name',
+	`pwd` varchar(32) COLLATE utf8_unicode_ci NOT NULL COMMENT 'user password',
+	`email` text COLLATE utf8_unicode_ci COMMENT 'user email',
+	`mobile` bigint(11) DEFAULT NULL COMMENT 'user mobilphone',
+	`reg_time` timestamp NOT NULL COMMENT 'user register time',
+	`update_time` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT 'information change time'
+) ENGINE=MYISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='user table';
+
+
+ALTER TABLE `user`
+	ADD PRIMARY KEY (`id`),
+	ADD UNIQUE KEY `id` (`id`),
+	ADD UNIQUE KEY `name` (`name`) USING BTREE;
+
+alter table `user`
+	MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'user id';
