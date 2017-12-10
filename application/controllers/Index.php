@@ -12,7 +12,7 @@ class IndexController extends Yaf_Controller_Abstract {
      * Yaf支持直接把Yaf_Request_Abstract::getParam()得到的同名参数作为Action的形参
      * 对于如下的例子, 当访问http://yourhost/six/index/index/index/name/root 的时候, 你就会发现不同
      */
-	public function indexAction($name = "Stranger") {
+	public function indexAction($name = "TEST") {
 		//1. fetch query
 		$get = $this->getRequest()->getQuery("get", "default value");
 
@@ -25,5 +25,10 @@ class IndexController extends Yaf_Controller_Abstract {
 
 		//4. render by Yaf, 如果这里返回FALSE, Yaf将不会调用自动视图引擎Render模板
         return TRUE;
+	}
+
+	public function testAction($name = "jacecao") {
+		echo json_encode(array("name"=>$name));
+		return FALSE;
 	}
 }
