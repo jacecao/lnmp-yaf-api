@@ -1,0 +1,20 @@
+--- 文章表结构
+CREATE TABLE IF NOT EXISTS `art` (
+	`id` int(11) NOT NULL COMMENT '文章ID',
+	`title` varchar(128) COLLATE utf8_unicode_ci NOT NULL COMMENT '文章标题',
+	`contents` text COLLATE utf8_unicode_ci NOT NULL COMMENT '文章内容',
+	`author` varchar(32) COLLATE utf8_unicode_ci not NULL COMMENT '文章作者',
+	`cate` int(4) NOT NULL COMMENT '文章分类ID',
+	`ctime` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
+	`mtime` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'modify time',
+	`status` enum('delete', 'online', 'offline') COLLATE utf8_unicode_ci DEFAULT 'offline' COMMENT '文章当前状态'
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8 COLLATE=utf8_unicode_ci COMMENT='文章';
+
+
+ALTER TABLE `art`
+	ADD PRIMARY KEY (`id`),
+	ADD KEY `Title index` (`title`),
+	ADD KEY `分类索引` (`cate`);
+
+ALTER TABLE `art`
+	MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '文章ID';

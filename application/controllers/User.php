@@ -7,13 +7,55 @@ class UserController extends Yaf_Controller_Abstract {
 	}
 
 	public function loginAction() {
-		echo "hello";
+		// 验证 注册提交submit字段
+		$submit = $this->getRequest()->getQuery("submit", "0");
+		if ($submit != "1") {
+			echo json_encode(array(
+			"errno"=>-1001,
+			"errmsg"=>"请通过正确渠道提交"
+			));
+			return FALSE;
+		}
+		// 获取参数
+		$uname = $this->getRequest()->getPost("uname", false);
+		$pwd = $this->getRequest()->getPost("pwd", false);
+		if (!$uname || !$pwd) {
+			echo json_encode(array(
+				"errno"=>-1002,
+				"errmsg"=> "用户名和密码不能为空"
+			));
+			return FALSE;
+		}
+		
+		// 调用model, 做登录验证
+		$model = new UserModel();
+		$uid = $model->login(trim($uname), trim($pwd));
+		if ($uid) {
+			
+			// 储存回话信息
+			seesion_start();
+			$_SESSION['user_token'] = md5("tjhzs-sesson-".$_SERVER['REQYEST_TIME'].$uid);
+			$_SESSION['user_token_time'] = $_SERVER['REQUEST_TIME'];
+			$_SESSION['user_id'] = $uid;
+			
+			echo json_encode(array(
+				"errno"=>0,
+				"errmsg"=>"",
+				"data"=>array("name"=>$uname)
+			));
+		} else {
+			echo json_encode(array(
+				"errno"=> $model->errno,
+				"errmsg"=> $model->errmsg
+			));
+			return FALSE;
+		}
 		return FALSE;			
 	}
 
 	public function registerAction() {
 		// 获取参数
-		$uname = $this->getRequest()->getPost("username", false);
+		$uname = $this->getRequest()->getPost("uname", false);
 		$pwd = $this->getRequest()->getPost("pwd", false);
 		
 		if (!$uname || !$pwd) {
