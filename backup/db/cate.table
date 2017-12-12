@@ -1,0 +1,14 @@
+--
+-- 文章类 表结构
+--
+
+CREATE TABLE IF NOT EXISTS `cate` (
+	`id` int(11) NOT NULL COMMENT 'ID',
+	`name` varchar(64) COLLATE utf8_unicode_ci NOT NULL COMMENT 'cate name'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_unicode_ci COMMENT 'cate info';
+
+ALTER TABLE `cate`
+	ADD PRIMARY KEY (`id`),
+	ADD KEY `name` (`name`);
+ALTER TABLE `cate`
+	MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'CATE ID';
