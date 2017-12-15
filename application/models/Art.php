@@ -140,7 +140,77 @@ class ArtModel {
 		return $data;
 	}
 	// get function end
+	
+	// list function start
+	public function list ($pageNo = 0, $pageSize = 0, $cate = 0, $status = "online") {
+		
+		$start = $pageNo * $pageSize + ($pageNo == 0? 0 : 1);
+		if($cate == 0) {
+			$filter = array($status, intval($start), intval($pageSize));
+			$query = $this->_db->prepare("select `id` , `title`, `contents`, `author`, `cate`, `ctime`, `mtime`, `status` from `art` where `status`=? order by `ctime` desc limit ?, ?");
+		} else {
+			$filter = array(intval($cate), $status, intval($start), intval($pageSize));
+			$query = $this->_db->prepare("select `id`, `title`, `contents`, `author`, `cate`, `ctime`, `mtime`, `status` from `art` where `cate`=? and `status`=? order by `ctime` desc limit ?, ?");
+		}
 
+		$stat = $query->execute($filter);
+		$ret = $query->fetchAll();
+		
+		if (!$ret) {
+			$this->errno = -2001;
+			$this->errmsg = "获取文章列表失败，ErrInfo: ".end($query->errorInfo());	
+			return false;	
+		}
+
+		// 存放数据信息
+		$data = array();
+		$cateInfo = array();
+		
+		foreach ($ret as $item) {
+			/*
+			**  获取分类信息
+			** 1 首先检查当前数据中的分类信息是否在cateInfo中存在
+	 		** 如果存在，那么就不用再去数据库中读取
+			*/
+			if (isset( $cateInfo[ $item['cate'] ] ) ) {
+				$cateName = $cateInfo[$item['cate']];
+			} else {
+				// 2 如果当前数据中分类信息不存在，那么到数据库中读取
+				$query = $this->_db->prepare("select `name` from `cate` where `id`=?");
+				$query->execute(array($item['cate']));
+				$retCate = $query->fetchAll();
+
+				if (!$retCate) {
+					$this->errno = -2010;
+					$this->errmsg = "获取分类信息失败，ErrInfo: ".end($query->errnorInfo());
+					return false;
+				}
+				$cateName = $cateInfo[$item['cate']] = $retCate[0]['name'];
+			}
+			
+			/*
+			** 正文太长则剪切
+			*/
+			$contents = mb_strlen($item['contents']) > 30 ? mb_substr($item['contents'], 0 , 30).'......' : $item['contents'];
+		
+			// 拼接数据信息，存入$data*
+			$data[] = array(
+				'id' => intval($item['id']),
+				'title' => $item['title'],
+				'contents' => $contents,
+				'author' => $item['author'],
+				'cateName' => $cateName,
+				'cateId' => intval($item['cate']),
+				'ctime' => $item['ctime'],
+				'mtime' => $item['mtime'],
+				'status' => $item['status']
+			);
+		} // foreach end
+		
+		return $data;
+	}
+
+	// list function end
 }
 
 	

@@ -37,7 +37,7 @@
 						"errmsg"=>$model->errmsg
 					));		
 				}	
-				return TRUE;
+				return FALSE;
 			}
 		}
 		// add function end
@@ -54,6 +54,7 @@
 						"errno"=>-2003,
 						"errmsg"=> "miss art id"
 					));
+					return FALSE;
 				}	
 			}
 		}
@@ -89,6 +90,7 @@
 				}
 
 			}
+			return FALSE;
 		}
 		// del function end	
 		
@@ -121,6 +123,7 @@
 				}
 
 			}
+			return FALSE;
 		}
 		// status function end
 		
@@ -153,10 +156,39 @@
 					"errmsg"=>"缺少文章ID"
 				));
 			}
-			return true;
+			return FALSE;
 		}
 		// get function end
 		
+		// list function start
+		public function listAction () {
+				
+			$pageNo = $this->getRequest()->getQuery("pageNo", "0");
+			$pageSize = $this->getRequest()->getQuery('pageSize', "10");
+			$cate = $this->getRequest()->getQuery("cate", "0");
+			$status = $this->getRequest()->getQuery("status", "online");
+		
+			$model = new ArtModel();
+			$data = $model->list($pageNo, $pageSize, $cate, $status);
+			
+			if ($data) {
+				echo json_encode(array(
+					"errno"=>0,
+					"errmsg"=>"",
+					"data"=>$data
+				));
+			} else {
+				echo json_encode(array(
+					"errno"=>-2012,
+					"errmsg"=>"获取文章列表失败"
+				));		
+			}
+				
+			return FALSE;
+		}
+		// list function end
+
+
 			
 		// _isAdmin start
 		private function  _isAdmin() {
@@ -183,6 +215,7 @@
 			}
 		}
 		// _checkadmin end
+
 			
 	}
 
