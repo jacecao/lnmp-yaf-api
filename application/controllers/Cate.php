@@ -1,34 +1,150 @@
 <?php
-/**
- * @name IndexController
- * @author root
- * @desc 默认控制器
- * @see http://www.php.net/manual/en/class.yaf-controller-abstract.php
+ /*
+ ** 分类信息
  */
-class IndexController extends Yaf_Controller_Abstract {
+class CateController extends Yaf_Controller_Abstract {
 
-	/** 
-     * 默认动作
-     * Yaf支持直接把Yaf_Request_Abstract::getParam()得到的同名参数作为Action的形参
-     * 对于如下的例子, 当访问http://yourhost/six/index/index/index/name/root 的时候, 你就会发现不同
-     */
-	public function indexAction($name = "TEST") {
-		//1. fetch query
-		$get = $this->getRequest()->getQuery("get", "default value");
-
-		//2. fetch model
-		$model = new SampleModel();
-
-		//3. assign
-		$this->getView()->assign("content", $model->selectSample());
-		$this->getView()->assign("name", $name);
-
-		//4. render by Yaf, 如果这里返回FALSE, Yaf将不会调用自动视图引擎Render模板
-        return TRUE;
+	public function indexAction() {
+        return $this->listAction();
 	}
+	
+	// add function start
+	// 增加分类
+	public function addAction($cateId = 0) {
+		if ($this->_checkAdmin()) {
+			// 获取参数
+			$name = $this->getRequest()->getPost("name", false);
+			if (!$name) {
+				echo json_encode(array(
+					"errno"=>-3002,
+					"errmsg"=>"the cate name was null"
+				));
+				return FALSE;
+			}
 
-	public function testAction($name = "jacecao") {
-		echo json_encode(array("name"=>$name));
+			// 调用model
+			$model = new CateModel();
+			$lastId = $model->add(trim($name), $cateId);
+		
+			if ($lastId) {
+				echo json_encode(array(
+					"errno"=>0,
+					"errmsg"=>"",
+					"data"=> array("lastId"=>$lastId)
+				));		
+			} else {
+				echo json_encode(array(
+					"errno" => $model->errno,
+					"errmsg" => $model->errmsg
+				));
+			}
+
+		}
+
 		return FALSE;
 	}
+	// add function end
+	
+	// edit function start
+	public function editAction() {
+		if ($this->_checkAdmin()) {
+			$cateId = $this->getRequest()->getQuery("cateId", "0");
+		
+			if (is_numeric($cateId) && $cateId) {
+				return $this->addAction($cateId);
+			} else {
+				echo json_encode(array(
+					"errno"=> -3003,
+					"errmsg"=> "cate id is null"
+				));
+				return FALSE;
+			}
+
+		}
+	}
+	// edit function end
+	
+	// del function start
+	public function delAction() {
+		if ($this->_checkAdmin()) {
+			
+			$cateId = $this->getRequest()->getQuery("cateId", "0");
+			
+			if (is_numeric($cateId) && $cateId) {
+					
+				$model = new CateModel();
+				if ($model->del($cateId)) {
+					echo json_encode(array(
+						"errno"=>0,
+						"errmsg"=>""
+					));
+				} else {
+					echo json_encode(array(
+						"errno"=>$model->errno,
+						"errmsg"=>$model->errmsg
+					));
+				}
+				
+			} else {
+				echo json_encode(array(
+					"errno"=>-3003,
+					"errmsg"=>"缺少分类ID参数"
+				));
+			}
+			
+		}
+
+		return FALSE;
+	}
+	// del function end
+	
+	// list function start
+	public function listAction() {
+		$model = new CateModel();
+		$data = $model->list();
+		if (!$data) {
+			
+			echo json_encode(array(
+				"errno"=>$model->errno,
+				"errmsg"=>$model->errmsg
+			));
+			return false;
+		} else {
+			
+			echo json_encode(array(
+				"errno"=>0,
+				"errmsg"=>"",
+				"data"=>$data
+			));
+		}
+		return FALSE;
+	}
+
+	// list function end
+
+	// 当前用户检测
+	private function _isAdmin() {
+		return true;
+	}
+
+	private function _checkAdmin() {
+		if (!$this->_isAdmin()) {
+			echo json_encode(array(
+				"errno"=>-2000,
+				"errmsg"=>"你不能执行该操作"
+			));	
+			return false;
+		} else {
+			$submit = $this->getRequest()->getQuery("submit", "0");
+			if ($submit != "1") {
+				echo json_encode(array(
+					"errno"=>-2001,
+					"errmsg"=>"提交渠道不正常"
+				));
+				return false;
+			}
+		}
+		return true;
+	}
+	
 }
