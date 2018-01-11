@@ -12,7 +12,7 @@
 			$this->_db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);		
 		}
 		
-		public function send ($uid, $contents) {
+		public function send ($uid, $templateId) {
 			$query = $this->_db->prepare("select `mobile` from `user` where `id`=?");
 			$query->execute( array( intval($uid) ) );
 
@@ -38,7 +38,7 @@
 			$sms = new ThirdParty_Sms($smsUn, $smsPwd);
 			
 			// 短信模板ID
-			$template = '100006';
+			$template = $templateId;
 
 			// 短信模板内参数设置
 			$contentParam = array('code' => $sms->randNumber());

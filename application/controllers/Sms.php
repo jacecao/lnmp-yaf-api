@@ -5,7 +5,7 @@
 class SmsController extends Yaf_Controller_Abstract {
 
 	public function indexAction() {
-	
+		$this->sendAction();	
 	}
 	
 	// 发送邮件
@@ -13,8 +13,8 @@ class SmsController extends Yaf_Controller_Abstract {
 		if ($this->_checkAdmin()) {
 			// 获取参数
 			$uid = $this->getRequest()->getPost('uid', false);
-			$contents = $this->getRequest()->getPost('contents', false);
-
+			$templateId = $this->getRequest()->getPost('templateId', '100006');
+			
 			if (!$uid) {
 				echo json_encode(array(
 					"errno"=>-4002,
@@ -22,11 +22,13 @@ class SmsController extends Yaf_Controller_Abstract {
 				));
 				return false;
 			}
+			
+			/* $templateId 需要制定范围，该代码还未写 */
 
 			// 调用Model,执行邮件发送
 			$model = new SmsModel();
 
-			if ($model->send( intval($uid),  trim($contents) )) {
+			if ( $model->send( intval($uid),  trim($templateId) ) ) {
 					echo json_encode(array(
 						"errno"=>0,
 						"errmsg"=>"",
