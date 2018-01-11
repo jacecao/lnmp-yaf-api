@@ -31,7 +31,7 @@ class UserModel {
 	}
 	
 		
-	public function register($uname, $pwd) {
+	public function register($uname, $pwd, $email, $mobile) {
 	
 		$query = $this->_db->prepare("select count(*) as c from `user` where `name`= ? ");
 		$query->execute(array($uname));
@@ -51,8 +51,8 @@ class UserModel {
 			$password = $this->_password_generate($pwd);
 		}
 	
-		$query = $this->_db->prepare("insert into `user` (`id`, `name`, `pwd`, `reg_time`) VALUES (null, ?, ?, ?)");
-		$ret = $query->execute(array($uname, $password, date("Y-m-d H:i:s")));
+		$query = $this->_db->prepare("insert into `user` (`id`, `name`, `pwd`, `reg_time`, `email`, `mobile`) VALUES (null, ?, ?, ?, ?, ?)");
+		$ret = $query->execute(array($uname, $password, date("Y-m-d H:i:s"), $email, $mobile));
 		
 		if (!$ret) {
 			$this->errno = -1006;

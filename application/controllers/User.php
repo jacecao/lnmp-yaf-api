@@ -57,6 +57,11 @@ class UserController extends Yaf_Controller_Abstract {
 		// 获取参数
 		$uname = $this->getRequest()->getPost("uname", false);
 		$pwd = $this->getRequest()->getPost("pwd", false);
+		$email = $this->getRequest()->getPost('email', false);
+		$mobile = $this->getRequest()->getPost('mobile', false);	
+		
+		$email = !$email ? null : $email;
+		$mobile = !$mobile ? null : $mobile;
 		
 		if (!$uname || !$pwd) {
 			echo json_encode(array(
@@ -64,11 +69,17 @@ class UserController extends Yaf_Controller_Abstract {
 				"errmsg"=>"用户名与密码必须传递"
 			));
 			return FALSE;
+		} else if ($email && !filter_var($email, FILTER_VALIDATE_EMAIL)){
+			echo json_encode(array(
+				"errno"=>-1002,
+				"errmsg"=>"邮件信息不符合标准"
+			));
+			return false;
 		}
 
 		// 调用数据模块，做登录验证
 		$model = new UserModel();
-		if ($model->register( trim($uname), trim($pwd) )) {
+		if ($model->register( trim($uname), trim($pwd), $email, $mobile ) ) {
 			echo json_encode(array(
 				"errno"=>0,
 				"errmsg"=>"",
