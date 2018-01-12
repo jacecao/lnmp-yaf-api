@@ -25,4 +25,7 @@
 
 	[composer中文网和国内镜像](http://www.phpcomposer.com), 在运行上面的命令后会在根目录下创建composer.json文件，这就跟NPM大同小异了
 	
-	最后我们选用的是nette/mail这个插件，可以支持第三方邮件服务 
+	最后我们选用的是nette/mail这个插件，可以支持第三方邮件服务
+	
+#### 3 第三方短信和推送服务
+	云信、个推	 

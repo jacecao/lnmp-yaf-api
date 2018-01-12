@@ -1,0 +1,17 @@
+--
+-- 短信发送记录 表结构
+--
+
+CREATE TABLE IF NOT EXISTS `sms_record` (
+	`id` int(11) NOT NULL COMMENT 'ID',
+	`uid` int(11) NOT NULL COMMENT '用户ID',
+	`contents` text COLLATE utf8_unicode_ci NOT NULL COMMENT '消息内容',
+	`template` int(11) NOT NULL COMMENT '短信模板',
+	`ctime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_unicode_ci COMMENT '短信发送记录';
+
+ALTER TABLE `sms_record`
+	ADD PRIMARY KEY (`id`),
+	ADD KEY `uid` (`uid`);
+ALTER TABLE `sms_record`
+	MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键';

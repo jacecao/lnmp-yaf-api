@@ -1,5 +1,7 @@
 <?php
-
+	/*
+	** 短信数据模块
+	*/
 	class SmsModel {
 		public $errno = 0;
 		public $errmsg = "";
@@ -46,10 +48,24 @@
 			$result = $sms->send($userMobile, $contentParam, $template);
 			
 			if ($result['stat'] == '100') {
+				
+				/* 短信发送成功后记录到数据库 */
+				$query = $this->_db->prepare("insert into `sms_record` (`uid`, `contents`, `template`) VALUES (?, ?, ?, ?)");
+				$ret = $query->execute( array($uid, json_encode($contentParam), $template) );
+				
+				if (!$ret) {
+					/* 短信记录失败 */
+					/* 短信记录失败怎么办？*/
+					$this->errno = -4006;
+					$this->errmsg = "消息发送成功，但发送记录失败。";
+					return true;
+				}
+
 				$this->errno = 0;
 				$this->errmsg = '';
 				return true;
 			} else {
+				
 				$this->errno = -4005;
 				$this->errmsg = '发送失败：'.$result['stat'].'('.$result['message'].')';
 				return false;
