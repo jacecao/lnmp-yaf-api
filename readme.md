@@ -25,7 +25,18 @@
 
 	[composer中文网和国内镜像](http://www.phpcomposer.com), 在运行上面的命令后会在根目录下创建composer.json文件，这就跟NPM大同小异了
 	
-	最后我们选用的是nette/mail这个插件，可以支持第三方邮件服务
+	最后我们选用的是nette/mail这个插件，可以支持第三方邮件服务    
+
+> 4 插件安装地址  
+
+	通过composer安装的插件都安装于vendor目录内，第三方插件引用方式   
+	`require __DIR__.'path/vendor/autoload.php'`    
+	具体使用可以参见application/models/Mail.php中的引用方法
+	
 	
 #### 3 第三方短信和推送服务
 	云信、个推	 
+
+	> 安装目录在application->ThirdParty目录下
+
+	ip信息转换第三方库（ipip.net）
