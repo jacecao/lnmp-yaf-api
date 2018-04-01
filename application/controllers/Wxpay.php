@@ -2,6 +2,10 @@
  /*
  ** 微信支付功能封装
  */
+// 引入二维码生成模块
+$qrcodeLibPath = dirname(__FILE__.'/../library/ThirdParty/');
+include_once($qrcodeLibPath.'Qrcode.php');
+
 class WxpayController extends Yaf_Controller_Abstract {
 
 	public function indexAction() {}
@@ -30,7 +34,32 @@ class WxpayController extends Yaf_Controller_Abstract {
 		return true;
 	}
 	// 创建二维码
-	public function qrcodeAction() {}
+	public function qrcodeAction() {
+		$bill_id = $this->getRequest()->getQuery('billid', '');
+		if (!$bill_id) {
+			echo json_encode(array(
+				'errno'=>-6008,
+				'errmsg'=>'请提交正确的订单ID'
+			));
+			return FALSE;
+		}
+		// 检查用户状态
+		if ($this->_checkAdmin()) {
+			// 调用Model
+			$model = new WxpayModel();
+			if ($data = $model->qrcode($bill_id)) {
+				// 输出二维码
+				// $data 是微信服务返回的支付地址
+				QRcode::png($data);
+			} else {
+				echo json_encode(array(
+					'errno' => $model->errno,
+					'errmsg' => $model->errmsg
+				));
+			}
+			return true;
+		}
+	}
 	// 支付回调
 	public function callbackAcion() {}
 	

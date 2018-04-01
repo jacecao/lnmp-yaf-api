@@ -2,6 +2,11 @@
 	/*
 	** 支付模块
 	*/
+	$wx_pay_lib_path = dirname(__FILE__).'/../library/ThirdParty/Wxpay/';
+	include_once($wx_pay_lib_path.'WxPay.Api.php');
+	include_once($wx_pay_lib_path.'WxPay.Notify.php');
+	include_once($wx_pay_lib_path.'WxPay.NativePay.php');
+	include_once($wx_pay_lib_path.'WxPay.Data.php');
 	class WxpayModel {
 		public $errno = 0;
 		public $errmsg = "";
@@ -63,8 +68,52 @@
 			// 返回最新订单id
 			return $last_bill_id;
 		}
+		
+		// 请求支付，返回支付地址
+		public function qrcode ($billId) {
+			$query = $this->_db->prepare('select * from `bill` where `id`= ?');
+			$query->execute(array($billId));
+			$ret = $query->fetchAll();
+
+			if (!$ret || count(ret) != 1) {
+				$this->errno = -6009;
+				$this->errmsg = '找不到账单信息';
+				return false;
+			}
+			$bill = $ret[0];
+
+			$query = $this->_db->prepare('select * from `item` where `id`= ?');
+			$query->execute(array($bill['itemid']));
+			$ret = $query->fetchAll();
+			if (!$ret || count($ret) != 1) {
+				$this->errno = -6010;
+				$this->errmsg = '找不到商品信息';
+				return false;
+			}
+			$item = $ret[0];
 			
+			$input = new WxPayUnifiedOrder();
+			$input->SetBody($item['name']);
+			$input->SetAttach($billId);
+			$input->SetOut_trade_no(WxPayConfig::MCHID.date("YmdHis"));
+			$input->SetTotal_fee($bill['price']);
+		    $input->SetTime_start(date("YmdHis"));
+			$input->SetTime_expire(date("YmdHis", time() + 6000 * 3));
+			$input->SetGoods_tag($item['name']);
+		    $input->SetNotify_url("https://api.mch.weixin.qq.com/pay/unifiedorder");
+		    $input->SetTrade_type("NATIVE");
+		    $input->SetProduct_id($billId);
+
+			$notify = new NativePay();
+			$result = $notify->GetPayUrl($input);
+			$url = $result["code_url"];		
+		
+		}
+
+
+
+
+
+
 	}
-
-
 ?>
