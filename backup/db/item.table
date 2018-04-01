@@ -1,0 +1,21 @@
+# 商品表单
+
+CREATE TABLE IF NOT EXISTS `item` (
+	`id` int(11) unsigned NOT NULL COMMENT 'item id',
+	`name` varchar(128) COLLATE utf8_unicode_ci NOT NULL COMMENT 'item name',
+	`description` text COLLATE utf8_unicode_ci NOT NULL COMMENT 'item desc',
+	`price` bigint(20) DEFAULT 0 COMMENT 'item price',
+	`stock` int(11) DEFAULT NULL COMMENT 'item stock',
+	`etime` timestamp NOT NULL COMMENT 'end time',
+	`ctime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'item create time',
+	`mtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'modify time',
+) ENGINE=MYISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='item table';
+
+
+ALTER TABLE `item`
+	ADD PRIMARY KEY (`id`),
+	ADD UNIQUE KEY `id` (`id`),
+	ADD UNIQUE KEY `name` (`name`) USING BTREE;
+
+alter table `item`
+	MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'item id';

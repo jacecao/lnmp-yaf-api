@@ -33,11 +33,10 @@ class UserController extends Yaf_Controller_Abstract {
 		if ($uid) {
 			
 			// 储存回话信息
-			seesion_start();
-			$_SESSION['user_token'] = md5("tjhzs-sesson-".$_SERVER['REQYEST_TIME'].$uid);
+			session_start();
+			$_SESSION['user_token'] = md5("tjhzs-session-".$_SERVER['REQUEST_TIME'].$uid);
 			$_SESSION['user_token_time'] = $_SERVER['REQUEST_TIME'];
 			$_SESSION['user_id'] = $uid;
-			
 			echo json_encode(array(
 				"errno"=>0,
 				"errmsg"=>"",
@@ -50,7 +49,7 @@ class UserController extends Yaf_Controller_Abstract {
 			));
 			return FALSE;
 		}
-		return FALSE;			
+		return TRUE;			
 	}
 
 	public function registerAction() {

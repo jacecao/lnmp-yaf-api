@@ -1,0 +1,15 @@
+--- 交易记录表单
+CREATE TABLE IF NOT EXISTS `bill` (
+	`id` int(11) NOT NULL COMMENT 'bill id',
+	`itemid` int(11) NOT NULL COMMENT 'item id',
+	`uid` int(11) NOT NULL COMMENT 'user id',
+	`price` int(11) NOT NULL DEFAULT 0,
+    `status` enum('paid', 'unpaid', 'failed') COLLATE utf8_unicode_ci DEFAULT 'unpaid',
+	`transaction` text COLLATE utf8_unicode_ci NULL COMMENT '交易状态',
+	`ctime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
+	`mtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'modify time',
+    `ptime` timestamp NULL COMMENT 'pay time'
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8 COLLATE=utf8_unicode_ci COMMENT='交易';
+
+ALTER TABLE `bill`
+	MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '交易id';
