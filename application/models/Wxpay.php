@@ -2,11 +2,19 @@
 	/*
 	** 支付模块
 	*/
+
+	/*
+	** 引入微信支付接口，这里采用普通扫码第二种模式
+	*/
+		
 	$wx_pay_lib_path = dirname(__FILE__).'/../library/ThirdParty/Wxpay/';
+	
 	include_once($wx_pay_lib_path.'WxPay.Api.php');
 	include_once($wx_pay_lib_path.'WxPay.Notify.php');
 	include_once($wx_pay_lib_path.'WxPay.NativePay.php');
 	include_once($wx_pay_lib_path.'WxPay.Data.php');
+	
+	
 	class WxpayModel {
 		public $errno = 0;
 		public $errmsg = "";
@@ -98,16 +106,17 @@
 			$input->SetOut_trade_no(WxPayConfig::MCHID.date("YmdHis"));
 			$input->SetTotal_fee($bill['price']);
 		    $input->SetTime_start(date("YmdHis"));
-			$input->SetTime_expire(date("YmdHis", time() + 6000 * 3));
+			$input->SetTime_expire(date("YmdHis", time() + 600));
 			$input->SetGoods_tag($item['name']);
 		    $input->SetNotify_url("https://api.mch.weixin.qq.com/pay/unifiedorder");
-		    $input->SetTrade_type("NATIVE");
+			$input->SetTrade_type("NATIVE");
 		    $input->SetProduct_id($billId);
 
 			$notify = new NativePay();
 			$result = $notify->GetPayUrl($input);
 			$url = $result["code_url"];		
-		
+			return $url;
+			
 		}
 
 

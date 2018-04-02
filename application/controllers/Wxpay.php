@@ -3,7 +3,7 @@
  ** 微信支付功能封装
  */
 // 引入二维码生成模块
-$qrcodeLibPath = dirname(__FILE__.'/../library/ThirdParty/');
+$qrcodeLibPath = dirname(__FILE__).'/../library/ThirdParty/';
 include_once($qrcodeLibPath.'Qrcode.php');
 
 class WxpayController extends Yaf_Controller_Abstract {
