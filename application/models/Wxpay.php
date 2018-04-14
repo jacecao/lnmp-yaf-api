@@ -15,7 +15,7 @@
 	include_once($wx_pay_lib_path.'WxPay.Data.php');
 	
 	
-	class WxpayModel {
+	class WxpayModel extends WxPayNotify {
 		public $errno = 0;
 		public $errmsg = "";
 
@@ -108,18 +108,19 @@
 		    $input->SetTime_start(date("YmdHis"));
 			$input->SetTime_expire(date("YmdHis", time() + 600));
 			$input->SetGoods_tag($item['name']);
-		    $input->SetNotify_url("https://api.mch.weixin.qq.com/pay/unifiedorder");
+		    $input->SetNotify_url("http://172.17.0.2/wxpay/callback");
 			$input->SetTrade_type("NATIVE");
 		    $input->SetProduct_id($billId);
 
 			$notify = new NativePay();
 			$result = $notify->GetPayUrl($input);
 			$url = $result["code_url"];		
+			
 			return $url;
 			
 		}
 
-
+		// 支付回调
 
 
 

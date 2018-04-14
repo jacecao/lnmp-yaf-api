@@ -60,8 +60,17 @@ class WxpayController extends Yaf_Controller_Abstract {
 			return true;
 		}
 	}
-	// 支付回调
-	public function callbackAcion() {}
+	
+	// 支付完成回调接口
+	public function callbackAcion() {
+		$model = new WxpayModel();
+		$model->callback();
+		echo json_encode(array(
+			'errno'=>0,
+			'errmsg'=>''
+		));	
+		return true;
+	}
 	
 	// 当前用户检测
 	private function _checkAdmin() {
